@@ -1,0 +1,30 @@
+version: "3"
+services:
+  sortingdb:
+    image: mongo:latest
+    command: mongod --port 30003
+    expose:
+      - 30003
+    ports:
+      - 30003:30003
+    volumes:
+      - ./sortingdb/db:/data/db
+      - ./sortingdb/configdb:/data/configdb
+    restart: always
+    networks:
+      - sortingnetwork
+  sortingapi:
+    build: .
+    expose: 
+      - 8082
+    ports:
+      - 8082:8082
+    restart: always
+    networks:
+      - circular-shift-service_circularshiftnetwork
+      - sortingnetwork
+networks:
+  sortingnetwork:
+    driver: bridge
+  circular-shift-service_circularshiftnetwork:
+    external: true

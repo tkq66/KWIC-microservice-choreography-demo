@@ -1,0 +1,36 @@
+user:
+  local.static.file:
+    endpoint: /files/
+    path: /opt/files/
+
+spring:
+  profiles:
+    active: '@activatedProperties@'
+  servlet:
+    multipart.max-file-size: 5GB
+    multipart.max-request-size: 5GB
+    
+---
+
+spring:
+  profiles: dev-docker
+  data.mongodb:
+    database: test
+    uri: mongodb://inputdb:30001/test
+    repositories.enabled: true
+    
+server:
+  port: 8080
+
+---
+
+spring:
+  profiles: dev-kubernetes
+  data.mongodb:
+    database: test
+    uri: mongodb://192.168.99.105:31851/test
+    repositories.enabled: true
+
+server:
+  port: 8080
+  

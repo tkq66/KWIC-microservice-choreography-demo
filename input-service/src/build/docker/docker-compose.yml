@@ -1,0 +1,27 @@
+version: "3"
+services:
+  inputdb:
+    image: mongo:latest
+    command: mongod --port 30001
+    expose:
+      - 30001
+    ports:
+      - 30001:30001
+    volumes:
+      - ./inputdb/db:/data/db
+      - ./inputdb/configdb:/data/configdb
+    restart: always
+    networks:
+      - inputnetwork
+  inputapi:
+    build: .
+    expose: 
+      - 8080
+    ports:
+      - 8080:8080
+    restart: always
+    networks:
+      - inputnetwork
+networks:
+  inputnetwork:
+    driver: bridge

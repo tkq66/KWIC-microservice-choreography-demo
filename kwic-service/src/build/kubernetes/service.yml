@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chairwise-main-service
+  labels:
+   run: chairwise-main-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 9000
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    run: chairwise-main-service
