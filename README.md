@@ -3,12 +3,11 @@
 This is a microservice implementation of Keywords in Context (KWIC), a popular software engineering case study. The microservice follows an choreography architecture. All services are buil using Spring with MongoDB as persistent storage and built with Docker and perform pub/sub through RabbitMQ.
 
 ## Services
-There are 5 services:
-1. **kwic-orchestration-service** - The main orchestrator, calling each services sequentially. File upload limit is 5GB. The REST request is done by Spring's WebFlux.
-2. **chariwise-input-service** - An input service that takes in user data in the form of file upload, raw text, or JSON list and store them into a persistent storage.
-3. **chairwise-circular-shift-service** - Performs circular shift over text data line-by-line to extrat all keywords. Data is provided by the *chairwise-input-service*, in which data from the database outputs into a file and *chairwise-circular-shift-service* then downloads that file into its own local filesystem before processing it. All data transfers in this architecture follow this pattern to avoid reading full data into memory.
-4. **chairwise-sorting-service** - Performs alphabetical descending sorting over text data. Data is provided by *chairwise-circular-shift-service*, with data transfer scheme as described in the point above.
-5. **chariwise-output-service** - Prepares and sends out different forms of ouput for the results. Outputs are provided in the form of: file download stream, file location string to be downloaded by the client, raw text, and JSON lis. Data is provided by *chairwise-sorting-service*, with data transfer scheme as described in the point above.
+There are 4 services:
+1. **kwic-service** - The main orchestrator, calling each services sequentially. File upload limit is 5GB. The REST request is done by Spring's WebFlux.
+2. **input-service** - An input service that takes in user data in the form of file upload, raw text, or JSON list and store them into a persistent storage.
+3. **circular-shift-service** - Performs circular shift over text data line-by-line to extrat all keywords. Data is provided by the *chairwise-input-service*, in which data from the database outputs into a file and *chairwise-circular-shift-service* then downloads that file into its own local filesystem before processing it. All data transfers in this architecture follow this pattern to avoid reading full data into memory.
+4. **sorting-service** - Performs alphabetical descending sorting over text data. Data is provided by *chairwise-circular-shift-service*, with data transfer scheme as described in the point above.
 
 ## Requirements
 * Ubuntu or other Debiand OS
@@ -27,5 +26,13 @@ This architecture can be deployed with either Docker Compose or Kubernetes. All 
 Image of each service is build with multi-stage build and dependency caching to optimize build speed. A **bridge** network is explicitly defined for all services so that a service may be discoverable by all services that depend on it. The orchestration service have the longest list of networks, for example, because it needs to connect with all other services.
 
 For convenience, *build-with-docker.sh* script is provided in the root folder to automatically deploy each service in a different gnome terminal, so you don't have to run the build script for each folder manually.
+
+#### Swagger
+For convenience in testing the API for each services, Swagger 2 is incoporated into the project. Once the services are running, a Swagger UI is avaialable for each service for testing. For Docker Compose deployment here are the links to all the Swagger UI for each services:
+
+1. **localhost:8084/swagger-ui.html** - kwic-orchestration-service
+2. **localhost:8080/swagger-ui.html** - chariwise-input-service
+3. **localhost:8081/swagger-ui.html** - chariwise-circular-shift-service
+4. **localhost:8082/swagger-ui.html** - chariwise-sorting-service
 
 ### Kubernetes
